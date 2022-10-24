@@ -328,6 +328,15 @@ int main(){
          printMultiMap(*it);
     }
 
+    auto result = std::find_if(students.begin(), students.end(), [](std::pair<string, int> p){return p.second == 64;});
+    
+    if(result != students.end()){
+        auto [id, value] = *result;
+        cout << id << endl;
+        cout << "Found an element with key " << id << " and value " << value <<endl;
+    }
+        
+
     
 
     return 0;
