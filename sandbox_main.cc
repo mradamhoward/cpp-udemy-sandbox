@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <map>
 
 using std::cout;
 using std::endl;
@@ -12,6 +13,7 @@ using std::ifstream;
 using std::ofstream;
 using std::find;
 using std::remove;
+using std::map;
 
 namespace sandbox{
     class Bottle {
@@ -72,6 +74,22 @@ void printIntVec(const vector<int> v){
     for(auto i : v){
         cout << i << ", ";
     }
+}
+
+struct Compare {
+    std::string str;
+    Compare(const std::string& str) : str(str) {}
+};
+bool operator==(const std::pair<int, std::string>&p, const Compare& c) {
+    return c.str == p.second;
+}
+bool operator==(const Compare& c, const std::pair<int, std::string>&p) {
+    return c.str == p.second;
+}
+
+
+void printMultiMap(const std::pair<string, int>& score){
+    cout << "Score: " << score.first << ", " << score.second << endl;
 }
 
 int main(){
@@ -241,6 +259,76 @@ int main(){
     ages.erase(removeEven, std::end(ages));
     showMessage("Print after remove even ages: ");
     printIntVec(ages);
+
+    map<int, string> employees;
+    //Add entries using make_pair or an anonymous object
+    employees.insert(std::make_pair(1, "Adam"));
+    employees.insert({2, "Cian"});
+    employees.insert(std::make_pair(3, "Adam"));
+    employees.insert(std::make_pair(4, "Adam"));
+    employees.insert(std::make_pair(5, "Cian"));
+    cout<<endl;
+    for(auto employee: employees){
+        cout << employee.second << " Has ID " << employee.first<< endl;
+    }
+    for(auto [id, name]: employees){
+        cout << name << " Has ID " << id << endl;
+    }
+    string countVal ("Adam");
+    cout << "There are " << std::count(employees.begin(), employees.end(), Compare(countVal)) << " entries with value " << countVal <<endl;
+
+    string countVal2 ("Cian");
+    cout << "There are " << std::count(employees.begin(), employees.end(), Compare(countVal2)) << " entries with value " << countVal2 <<endl;
+
+    auto [iter, success] =  employees.insert(std::make_pair(5, "Adam"));
+    if(success){
+        cout<<  "Successfully inserted new element."<<endl;
+    } else  {
+        auto [name, score] = *iter;
+        cout << "Insert failed. "<<endl;
+        cout << "Existing element with name " << name << " and score " << score << endl;
+    }
+    auto [iter2, success2] =  employees.insert(std::make_pair(6, "Adam"));
+    if(success2){
+        cout<<  "Successfully inserted new element."<<endl;
+    } else  {
+        auto [name, score] = *iter2;
+        cout << "Insert failed. "<<endl;
+        cout << "Existing element with name " << name << " and score " << score << endl;
+    }
+
+    auto [iter3, success3] = employees.insert_or_assign(5, "Adam");
+     if(success3){
+        cout<<  "Successfully inserted new element."<<endl;
+    } else  {
+        auto [id, name] = *iter3;
+        cout << "Insert failed. "<<endl;
+        cout << "Existing element with id " << id << " now has been assigned a name of " << name << endl;
+    }
+
+    for(auto employee: employees){
+        cout << employee.second << " Has ID " << employee.first<< endl;
+    }
+
+    std::multimap<string, int> students;
+    students.insert({"Mary", 66});
+    students.insert({"Jim", 64});
+    students.insert({"Mary", 44});
+    students.insert({"Jacob", 87});
+    students.insert({"Mary", 26});
+
+    for(auto student: students){
+        cout << student.first << " - " << student.second << endl;
+    }
+
+    auto mary_lower = students.lower_bound("Mary");
+    auto mary_upper = students.upper_bound("Mary");
+
+    for(auto it = mary_lower; it != mary_upper; ++it){
+         printMultiMap(*it);
+    }
+
+    
 
     return 0;
 }
