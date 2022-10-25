@@ -92,6 +92,37 @@ void printMultiMap(const std::pair<string, int>& score){
     cout << "Score: " << score.first << ", " << score.second << endl;
 }
 
+class Vehicle{
+    public:
+    void accelerate(){cout << "Accelerating.." << endl;}
+};
+
+class Aeroplane : public Vehicle {
+    public: 
+    using Vehicle::accelerate;
+    void accelerate(int height){
+        cout << "Accelerating at a height of " << height <<endl;
+    }
+};
+
+class Shape{
+    public:
+    virtual void draw() const { cout << "Drawing a generic shape.." << endl; }
+};
+
+class Circle : public Shape{
+    public:
+    void draw() const { cout << "Drawing a circle..." << endl; }
+};
+
+void draw_shape(const Shape& s){
+    s.draw();
+}
+
+void draw_shape(const Circle& c){
+    c.draw();
+}
+
 int main(){
     int x = 2;
     cout << "Address of x is: " << &x << endl;
@@ -335,9 +366,26 @@ int main(){
         cout << id << endl;
         cout << "Found an element with key " << id << " and value " << value <<endl;
     }
-        
 
+    Aeroplane plane;
+    plane.accelerate(1999);
+    //using Vehicle::accelerate allows the Aeroplane class 
+    //to access the overloaded functions: accelerate()
+
+    plane.accelerate();
+
+    vector<Shape*> shapes;
+    shapes.push_back(new Circle);
+
+
+
+    for(auto s : shapes){
+        s->draw();
+    }
+
+    for(auto s: shapes){
+        delete s;
+    }
     
-
     return 0;
 }
